@@ -1,5 +1,3 @@
-# @api private
-#
 # This class provides an abstract way to trigger resolved.
 # Each parameters correspond to resolved.conf(5):
 # https://www.freedesktop.org/software/systemd/man/resolved.conf.html
@@ -57,7 +55,6 @@ class systemd::resolved (
   Optional[Variant[Boolean,Enum['udp', 'tcp']]] $dns_stub_listener   = $systemd::dns_stub_listener,
   Boolean $use_stub_resolver                                         = $systemd::use_stub_resolver,
 ) {
-  assert_private()
 
   $_enable_resolved = $ensure ? {
     'stopped' => false,

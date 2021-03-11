@@ -1,10 +1,7 @@
-# @api private
-#
 # This class manages systemd's udev config
 #
 # https://www.freedesktop.org/software/systemd/man/udev.conf.html
 class systemd::udevd {
-  assert_private()
 
   service { 'systemd-udevd':
     ensure => running,

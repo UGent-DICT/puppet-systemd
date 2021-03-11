@@ -4,8 +4,6 @@
 #
 # https://www.freedesktop.org/software/systemd/man/logind.conf.html
 class systemd::logind {
-  assert_private()
-
   service { 'systemd-logind':
     ensure => running,
   }

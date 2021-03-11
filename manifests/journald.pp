@@ -4,8 +4,6 @@
 #
 # https://www.freedesktop.org/software/systemd/man/journald.conf.html
 class systemd::journald {
-  assert_private()
-
   service { 'systemd-journald':
     ensure => running,
   }

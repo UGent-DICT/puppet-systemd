@@ -153,31 +153,64 @@ class systemd (
   create_resources('systemd::service_limits', $service_limits)
 
   if $manage_resolved and $facts['systemd_internal_services'] and $facts['systemd_internal_services']['systemd-resolved.service'] {
-    contain systemd::resolved
+    class { 'systemd::resolved':
+      ensure            => $resolved_ensure,
+      dns               => $dns,
+      fallback_dns      => $fallback_dns,
+      domains           => $domains,
+      llmnr             => $llmnr,
+      multicast_dns     => $multicast_dns,
+      dnssec            => $dnssec,
+      dnsovertls        => $dnsovertls,
+      cache             => $cache,
+      dns_stub_listener => $dns_stub_listener,
+      use_stub_resolver => $use_stub_resolver,
+    }
   }
 
   if $manage_networkd and $facts['systemd_internal_services'] and $facts['systemd_internal_services']['systemd-networkd.service'] {
-    contain systemd::networkd
+    class { 'systemd::networkd':
+      ensure => $networkd_ensure,
+    }
   }
 
   if $manage_timesyncd and $facts['systemd_internal_services'] and $facts['systemd_internal_services']['systemd-timesyncd.service'] {
-    contain systemd::timesyncd
+    class { 'systemd::timesyncd':
+      ensure              => $timesyncd_ensure,
+      ntp_server          => $ntp_server,
+      fallback_ntp_server => $fallback_ntp_server,
+    }
   }
 
   if $manage_udevd {
-    contain systemd::udevd
+    class { 'systemd::udevd':
+      rules               => $udev_rules,
+      udev_log            => $udev_log,
+      udev_children_max   => $udev_children_max,
+      udev_exec_delay     => $udev_exec_delay,
+      udev_event_timeout  => $udev_event_timeout,
+      udev_resolve_names  => $udev_resolve_names,
+      udev_timeout_signal => $udev_timeout_signal,
+    }
   }
 
   if $manage_accounting {
-    contain systemd::system
+    class { 'systemd::system':
+      accounting => $accounting,
+    }
   }
 
   if $manage_journald {
-    contain systemd::journald
+    class { 'systemd::journald':
+      settings => $journald_settings,
+    }
   }
 
   if $manage_logind {
-    contain systemd::logind
+    class { 'systemd::logind':
+      settings       => $logind_settings,
+      loginctl_users => $loginctl_users,
+    }
   }
 
   $dropin_files.each |$name, $resource| {
