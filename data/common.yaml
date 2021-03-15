@@ -35,3 +35,6 @@ systemd::logind_settings: {}
 
 systemd::timesyncd::service_name: 'systemd-timesyncd'
 systemd::timesyncd::config_path: '/etc/systemd/timesyncd.conf'
+
+systemd::journald::service_name: 'systemd-journald'
+systemd::journald::config_path: '/etc/systemd/journald.conf'

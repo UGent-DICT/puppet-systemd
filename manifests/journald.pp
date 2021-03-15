@@ -1,19 +1,34 @@
-# @api private
-#
 # This class manages and configures journald.
 #
 # https://www.freedesktop.org/software/systemd/man/journald.conf.html
-class systemd::journald {
-  service { 'systemd-journald':
-    ensure => running,
+#
+# @param service_name
+#   Name of the journald service
+# @param config_path
+#   Filesystem path to the journald configuration file
+# @param ensure_service
+#   State that the journald service should be in
+# @param settings
+#   Config Hash that is used to configure settings in journald.conf
+#
+class systemd::journald(
+  String $service_name,
+  Stdlib::Unixpath $config_path,
+  Enum['running','stopped'] $ensure_service = 'running',
+  Systemd::JournaldSettings $settings = {},
+) {
+
+  service { $service_name:
+    ensure => $ensure_service,
   }
-  $systemd::journald_settings.each |$option, $value| {
+
+  $settings.each |$option, $value| {
     ini_setting {
       $option:
-        path    => '/etc/systemd/journald.conf',
+        path    => $config_path,
         section => 'Journal',
         setting => $option,
-        notify  => Service['systemd-journald'],
+        notify  => Service[$service_name],
     }
     if $value =~ Hash {
       Ini_setting[$option] {
