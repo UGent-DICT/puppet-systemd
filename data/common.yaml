@@ -43,3 +43,6 @@ systemd::logind::service_name: 'systemd-logind'
 systemd::logind::config_path: '/etc/systemd/logind.conf'
 
 systemd::networkd::service_name: 'systemd-networkd'
+
+systemd::udevd::service_name: 'systemd-udevd'
+systemd::udevd::config_path: '/etc/udev/udev.conf'
