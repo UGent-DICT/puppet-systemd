@@ -32,3 +32,6 @@ systemd::udev_timeout_signal: ~
 systemd::udev_resolve_names: ~
 systemd::manage_logind: false
 systemd::logind_settings: {}
+
+systemd::timesyncd::service_name: 'systemd-timesyncd'
+systemd::timesyncd::config_path: '/etc/systemd/timesyncd.conf'
