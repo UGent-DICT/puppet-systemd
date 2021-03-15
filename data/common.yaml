@@ -41,3 +41,5 @@ systemd::journald::config_path: '/etc/systemd/journald.conf'
 
 systemd::logind::service_name: 'systemd-logind'
 systemd::logind::config_path: '/etc/systemd/logind.conf'
+
+systemd::networkd::service_name: 'systemd-networkd'
