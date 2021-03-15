@@ -49,3 +49,5 @@ systemd::udevd::config_path: '/etc/udev/udev.conf'
 
 systemd::resolved::service_name: 'systemd-resolved'
 systemd::resolved::config_path: '/etc/systemd/resolved.conf'
+
+systemd::system::config_path: '/etc/systemd/system.conf'
