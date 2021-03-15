@@ -46,3 +46,6 @@ systemd::networkd::service_name: 'systemd-networkd'
 
 systemd::udevd::service_name: 'systemd-udevd'
 systemd::udevd::config_path: '/etc/udev/udev.conf'
+
+systemd::resolved::service_name: 'systemd-resolved'
+systemd::resolved::config_path: '/etc/systemd/resolved.conf'

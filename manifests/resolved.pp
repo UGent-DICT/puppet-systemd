@@ -2,6 +2,12 @@
 # Each parameters correspond to resolved.conf(5):
 # https://www.freedesktop.org/software/systemd/man/resolved.conf.html
 #
+# @param service_name
+#   Name of the logind service to manage
+#
+# @param config_path
+#   Filesystem path to the logind configuration path
+#
 # @param ensure
 #   The state that the ``resolved`` service should be in
 #
@@ -43,17 +49,19 @@
 #   as /etc/resolv.conf. When "true", it uses /run/systemd/resolve/stub-resolv.conf
 #
 class systemd::resolved (
-  Enum['stopped','running'] $ensure                                  = $systemd::resolved_ensure,
-  Optional[Variant[Array[String],String]] $dns                       = $systemd::dns,
-  Optional[Variant[Array[String],String]] $fallback_dns              = $systemd::fallback_dns,
-  Optional[Variant[Array[String],String]] $domains                   = $systemd::domains,
-  Optional[Variant[Boolean,Enum['resolve']]] $llmnr                  = $systemd::llmnr,
-  Optional[Variant[Boolean,Enum['resolve']]] $multicast_dns          = $systemd::multicast_dns,
-  Optional[Variant[Boolean,Enum['allow-downgrade']]] $dnssec         = $systemd::dnssec,
-  Optional[Variant[Boolean,Enum['opportunistic', 'no']]] $dnsovertls = $systemd::dnsovertls,
-  Optional[Variant[Boolean,Enum['no-negative']]] $cache              = $systemd::cache,
-  Optional[Variant[Boolean,Enum['udp', 'tcp']]] $dns_stub_listener   = $systemd::dns_stub_listener,
-  Boolean $use_stub_resolver                                         = $systemd::use_stub_resolver,
+  String $service_name,
+  Stdlib::Unixpath $config_path,
+  Enum['stopped','running'] $ensure                                  = 'running',
+  Optional[Variant[Array[String],String]] $dns                       = undef,
+  Optional[Variant[Array[String],String]] $fallback_dns              = undef,
+  Optional[Variant[Array[String],String]] $domains                   = undef,
+  Optional[Variant[Boolean,Enum['resolve']]] $llmnr                  = undef,
+  Optional[Variant[Boolean,Enum['resolve']]] $multicast_dns          = undef,
+  Optional[Variant[Boolean,Enum['allow-downgrade']]] $dnssec         = undef,
+  Optional[Variant[Boolean,Enum['opportunistic', 'no']]] $dnsovertls = false,
+  Optional[Variant[Boolean,Enum['no-negative']]] $cache              = false,
+  Optional[Variant[Boolean,Enum['udp', 'tcp']]] $dns_stub_listener   = undef,
+  Boolean $use_stub_resolver                                         = false,
 ) {
 
   $_enable_resolved = $ensure ? {
@@ -62,7 +70,7 @@ class systemd::resolved (
     default   => $ensure,
   }
 
-  service { 'systemd-resolved':
+  service { $service_name:
     ensure => $ensure,
     enable => $_enable_resolved,
   }
@@ -74,7 +82,7 @@ class systemd::resolved (
   file { '/etc/resolv.conf':
     ensure  => 'symlink',
     target  => $_resolv_conf_target,
-    require => Service['systemd-resolved'],
+    require => Service[$service_name],
   }
 
   if $dns {
@@ -88,8 +96,8 @@ class systemd::resolved (
       value   => $_dns,
       setting => 'DNS',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -104,8 +112,8 @@ class systemd::resolved (
       value   => $_fallback_dns,
       setting => 'FallbackDNS',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -120,8 +128,8 @@ class systemd::resolved (
       value   => $_domains,
       setting => 'Domains',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -137,8 +145,8 @@ class systemd::resolved (
       value   => $_llmnr,
       setting => 'LLMNR',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -154,8 +162,8 @@ class systemd::resolved (
       value   => $_multicast_dns,
       setting => 'MulticastDNS',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -171,8 +179,8 @@ class systemd::resolved (
       value   => $_dnssec,
       setting => 'DNSSEC',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -188,8 +196,8 @@ class systemd::resolved (
       value   => $_dnsovertls,
       setting => 'DNSOverTLS',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -205,8 +213,8 @@ class systemd::resolved (
       value   => $_cache,
       setting => 'Cache',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 
@@ -222,8 +230,8 @@ class systemd::resolved (
       value   => $_dns_stub_listener,
       setting => 'DNSStubListener',
       section => 'Resolve',
-      path    => '/etc/systemd/resolved.conf',
-      notify  => Service['systemd-resolved'],
+      path    => $config_path,
+      notify  => Service[$service_name],
     }
   }
 }
